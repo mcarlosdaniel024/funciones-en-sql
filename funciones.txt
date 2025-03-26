@@ -1,0 +1,63 @@
+funcion para mostrar las citas programadas un dia especifico
+
+//creacion
+
+DELIMITER $$
+CREATE FUNCTION ObtenerNumeroCitas(p_id_paciente INT, p_fecha DATE) 
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE total_citas INT;
+    SELECT COUNT(*) INTO total_citas 
+    FROM citas 
+    WHERE id_paciente = p_id_paciente 
+    AND DATE(fecha_hora) = p_fecha;
+    RETURN total_citas;
+END$$
+DELIMITER ;
+
+//Asi se llama
+
+SELECT ObtenerNumeroCitas(1, '2025-03-26') AS total_citas;
+
+//Funcion para obtener el consultorio asignado a una cita especifica
+
+DELIMITER $$
+CREATE FUNCTION ObtenerConsultorio(p_id_cita INT) 
+RETURNS INT
+DETERMINISTIC
+BEGIN
+    DECLARE num_consultorio INT;
+    SELECT c.numero INTO num_consultorio
+    FROM citas ci
+    JOIN consultorios c ON ci.consultorio_id = c.id_consultorio
+    WHERE ci.id_cita = p_id_cita;
+    RETURN num_consultorio;
+END$$
+DELIMITER ;
+
+//Asi se llama
+
+SELECT ObtenerConsultorio(5) AS consultorio;
+
+
+//Funcion para obtener el nombre completo de un enfermero 
+DELIMITER $$
+CREATE FUNCTION ObtenerNombreEnfermero(p_id_enfermero INT) 
+RETURNS VARCHAR(200)
+DETERMINISTIC
+BEGIN
+    DECLARE nombre_completo VARCHAR(200);
+    SELECT CONCAT(nombre, ' ', apellido) INTO nombre_completo 
+    FROM enfermeros 
+    WHERE id_enfermero = p_id_enfermero;
+    RETURN nombre_completo;
+END$$
+DELIMITER ;
+
+
+//SELECT ObtenerNombreEnfermero(3) AS nombre_enfermero;
+
+
+
+link de DBDIAGRAM
